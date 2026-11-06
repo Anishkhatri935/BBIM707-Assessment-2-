@@ -1,0 +1,47 @@
+    5  wget https://archive.apache.org/dist/hadoop/common/hadoop-3.4.3/hadoop-3.4.3.tar.gz
+    6  tar -xzf hadoop-3.4.3.tar.gz
+    7  mv hadoop-3.4.3 hadoop
+    8  ls ~/hadoop
+   11  hadoop version
+   20  hadoop version
+   21  echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64' >> ~/hadoop/etc/hadoop/hadoop-env.sh
+   22  nano ~/hadoop/etc/hadoop/core-site.xml
+   23  cat ~/hadoop/etc/hadoop/core-site.xml
+   24  cat > ~/hadoop/etc/hadoop/core-site.xml <<'EOF'
+   29          <value>hdfs://localhost:9000</value>
+   33  cat ~/hadoop/etc/hadoop/core-site.xml
+   34  hdfs getconf -confKey fs.defaultFS
+   35  nano ~/hadoop/etc/hadoop/hdfs-site.xml
+   36  mkdir -p ~/hadoop_data/namenode
+   37  mkdir -p ~/hadoop_data/datanodemkdir -p ~/hadoop_data/namenode
+   38  mkdir -p ~/hadoop_data/datanode
+   39  hdfs getconf -confKey dfs.replication
+   40  cat > ~/hadoop/etc/hadoop/hdfs-site.xml <<'EOF'
+   49          <value>file:///home/kcani/hadoop_data/namenode</value>
+   53          <value>file:///home/kcani/hadoop_data/datanode</value>
+   57  mkdir -p ~/hadoop_data/namenode ~/hadoop_data/datanode
+   58  hdfs getconf -confKey dfs.replication
+   65  hdfs namenode -format
+   66  start-dfs.sh
+   68  hdfs dfsadmin -report
+   71  hdfs dfs -mkdir -p /user/kcani/bbim707/raw/taxi_trips
+   72  hdfs dfs -mkdir -p /user/kcani/bbim707/raw/taxi_zones
+   73  hdfs dfs -put /mnt/c/Users/kcani/yellow_tripdata_2025-01.parquet /user/kcani/bbim707/raw/taxi_trips/
+   74  hdfs dfs -put /mnt/c/Users/kcani/taxi_zone_lookup.csv /user/kcani/bbim707/raw/taxi_zones/
+   75  hdfs dfs -ls -R -h /user/kcani/bbim707/raw
+   76  sha256sum /mnt/c/Users/kcani/yellow_tripdata_2025-01.parquet
+   77  hdfs dfs -cat /user/kcani/bbim707/raw/taxi_trips/yellow_tripdata_2025-01.parquet | sha256sum
+   78  sha256sum /mnt/c/Users/kcani/taxi_zone_lookup.csv
+   79  hdfs dfs -cat /user/kcani/bbim707/raw/taxi_zones/taxi_zone_lookup.csv | sha256sum
+   80  hdfs fsck /user/kcani/bbim707/raw -files -blocks -locations
+   81  printf 'trip_id,amount\n1,25.50\n2,18.75\n' > ~/hdfs_recovery_test.csv
+   82  cat ~/hdfs_recovery_test.csv
+   83  hdfs dfs -put ~/hdfs_recovery_test.csv /user/kcani/bbim707/nonexistent/recovery_test.csv
+   84  hdfs dfs -put /mnt/c/Users/kcani/taxi_zone_lookup.csv /user/kcani/bbim707/recovery_test/taxi_zone_lookup.csv
+   85  hdfs dfs -mkdir -p /user/kcani/bbim707/recovery_test
+   86  hdfs dfs -put /mnt/c/Users/kcani/taxi_zone_lookup.csv /user/kcani/bbim707/recovery_test/
+   87  hdfs dfs -ls -h /user/kcani/bbim707/recovery_test/
+   88  sha256sum /mnt/c/Users/kcani/taxi_zone_lookup.csv
+   89  hdfs dfs -cat /user/kcani/bbim707/recovery_test/taxi_zone_lookup.csv | sha256sum
+   94  history | grep -E 'hdfs|hadoop|start-dfs|stop-dfs|sha256sum'
+   95  history | grep -E 'hdfs|hadoop|start-dfs|stop-dfs|sha256sum' > ~/HDFS_commands.txt
